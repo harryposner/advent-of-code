@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
 
+
+# This was the first time I tried solving the puzzle the night of.  Here's my
+# score:
+#       --------Part 1--------   --------Part 2--------
+# Day       Time   Rank  Score       Time   Rank  Score
+#   4   00:06:29    680      0   00:12:05    457      0
+
 from itertools import groupby
 
 with open("input.txt", "r") as f:
