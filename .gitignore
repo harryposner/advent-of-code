@@ -1,2 +1,6 @@
 input.txt
 __pycache__/
+
+# Vim swapfiles
+*.swp
+*.swo
