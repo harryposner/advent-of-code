@@ -4,3 +4,5 @@ __pycache__/
 # Vim swapfiles
 *.swp
 *.swo
+
+*.nrepl-port
