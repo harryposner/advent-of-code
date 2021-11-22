@@ -6,3 +6,9 @@ __pycache__/
 *.swo
 
 *.nrepl-port
+
+.lsp/
+
+# Clojure specific
+.clj-kondo/
+.cpcache/
