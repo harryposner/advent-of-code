@@ -1,5 +1,6 @@
-(require '[clojure.string :as string])
-
+(ns y2019.day-02
+  (:require [clojure.string :as string]
+            [aocd.core :as aoc]))
 
 (defn apply-op [mem ptr]
   (let [[opcode arg1-addr arg2-addr dest] (subvec mem ptr (+ ptr 4))
@@ -13,9 +14,9 @@
   ([mem ptr]
    (let [opcode (mem ptr)]
      (if (= opcode 99)
-         (first mem)
-         (recur (apply-op mem ptr)
-                (+ ptr 4))))))
+       (first mem)
+       (recur (apply-op mem ptr)
+              (+ ptr 4))))))
 
 (defn part-1 [mem]
   (-> mem
@@ -23,10 +24,10 @@
       run-intcode))
 
 (defn goal? [mem noun verb]
-  (if (-> mem
-          (assoc 1 noun 2 verb)
-          run-intcode
-          (= 19690720))
+  (when (-> mem
+            (assoc 1 noun 2 verb)
+            run-intcode
+            (= 19690720))
     (+ (* 100 noun) verb)))
 
 (defn part-2 [mem]
@@ -35,13 +36,15 @@
               verb (range 100)]
           [noun verb])))
 
-(def input
-  (-> "input.txt"
-      slurp
-      string/trim
-      (string/split #",")
-      (as-> $ (map #(Integer/parseInt %) $))
-      vec))
+(defn -main
+  []
+  (let [input (-> (aoc/input 2019 2)
+                  string/trim
+                  (string/split #",")
+                  (as-> $ (map #(Integer/parseInt %) $))
+                  vec)]
+    (println "Part 1:" (part-1 input))
+    (println "Part 2:" (part-2 input))))
 
-(println "Part 1:" (part-1 input))
-(println "Part 2:" (part-2 input))
+(comment
+ (-main))

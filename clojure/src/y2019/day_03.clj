@@ -1,6 +1,7 @@
-(require '[clojure.string :as string]
-         '[clojure.set :as set])
-
+(ns y2019.day-03
+  (:require [clojure.string :as string]
+            [clojure.set :as set]
+            [aocd.core :as aoc]))
 
 (defn distance [[x0 y0] [x1 y1]]
   (+ (Math/abs (- x1 x0))
@@ -13,10 +14,9 @@
        (map (partial distance [0 0]))
        (apply min)))
 
-
 (defn path-lengths [coords wire]
   (->> wire
-       (keep-indexed (fn [idx elt] (if (coords elt) [elt (inc idx)])))
+       (keep-indexed (fn [idx elt] (when (coords elt) [elt (inc idx)])))
        (into {})))
 
 (defn part-2 [wires]
@@ -29,7 +29,6 @@
     (->> intersections
          (map combined-distance)
          (apply min))))
-
 
 (defn coord-range [[x0 y0] direction-str]
   (let [heading (first direction-str)
@@ -50,11 +49,13 @@
                     (coord-range (last trail) next-dir)))
      (rest trail))))  ;;; The origin doesn't count
 
-(def input
-  (->> "input.txt"
-      slurp
-      string/split-lines
-      (map (comp directions->wire #(string/split % #",")))))
+(defn -main
+  []
+  (let [input (->> (aoc/input 2019 3)
+                   string/split-lines
+                   (map (comp directions->wire #(string/split % #","))))]
+    (println "Part 1:" (part-1 input))
+    (println "Part 2:" (part-2 input))))
 
-(println "Part 1:" (part-1 input))
-(println "Part 2:" (part-2 input))
+(comment
+ (-main))

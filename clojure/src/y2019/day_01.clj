@@ -1,5 +1,6 @@
-(require '[clojure.string :as string])
-
+(ns y2019.day-01
+  (:require [clojure.string :as string]
+            [aocd.core :as aoc]))
 
 (defn mass->fuel [mass]
   (- (quot mass 3)
@@ -9,15 +10,21 @@
   (loop [total-fuel 0
          incr-fuel (mass->fuel mass)]
     (if (zero? incr-fuel)
-        total-fuel
-        (recur (+ total-fuel incr-fuel)
-               (max 0 (mass->fuel incr-fuel))))))
+      total-fuel
+      (recur (+ total-fuel incr-fuel)
+             (max 0 (mass->fuel incr-fuel))))))
 
-(def module-masses
-  (->> "input.txt"
-       slurp
+(defn module-masses
+  [input]
+  (->> input
        string/split-lines
        (map #(Integer/parseInt %))))
 
-(println "Part 1:" (apply + (map mass->fuel module-masses)))
-(println "Part 2:" (apply + (map rocket-equation module-masses)))
+(defn -main
+  []
+  (let [masses (module-masses (aoc/input 2019 1))]
+    (println "Part 1:" (apply + (map mass->fuel masses)))
+    (println "Part 2:" (apply + (map rocket-equation masses)))))
+
+(comment
+ (-main))

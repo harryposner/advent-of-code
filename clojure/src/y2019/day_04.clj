@@ -1,6 +1,6 @@
 (ns y2019.day-04
-  (:require [clojure.string :as str]))
-
+  (:require [clojure.string :as str]
+            [aocd.core :as aoc]))
 
 (defn digits [n]
   (map #(- (int %) 48) (str n))) ;;; 48 is ascii 0
@@ -25,13 +25,14 @@
        (filter #(and (non-dec? %) (run-of-two? = %)))
        count))
 
-(def bounds (-> "input.txt"
-                slurp
-                str/trim
-                (str/split #"-")
-                (as-> $ (map #(Integer/parseInt %) $))))
-
-(defn main
+(defn -main
   []
-  (println "Part 1:" (part-1 bounds))
-  (println "Part 2:" (part-2 bounds)))
+  (let [bounds (-> (aoc/input 2019 4)
+                   str/trim
+                   (str/split #"-")
+                   (as-> $ (map #(Integer/parseInt %) $)))]
+    (println "Part 1:" (part-1 bounds))
+    (println "Part 2:" (part-2 bounds))))
+
+(comment
+  (-main))
