@@ -1,7 +1,6 @@
-#!/usr/bin/env -S clj -M
-
-(ns advent-of-code.2020.day-12
-  (:require [clojure.string :as string]))
+(ns y2020.day-12
+  (:require [clojure.string :as string]
+            [aocd.core :as aoc]))
 
 (def starting-ship-state
   {:location [0 0]
@@ -60,10 +59,15 @@
     \R (update ship :waypoint rotate (mod (- value) 360))
     \F (update ship :location move (:waypoint ship) value)))
 
-(let [input (map parse (string/split-lines (slurp "input.txt")))]
-  (println "Part 1:" (-> (reduce part-1-action starting-ship-state input)
-                          :location
-                          (manhattan-distance [0 0])))
-  (println "Part 2:" (-> (reduce part-2-action starting-ship-state input)
-                         :location
-                         (manhattan-distance [0 0]))))
+(defn -main
+  []
+  (let [input (map parse (string/split-lines (aoc/input 2020 12)))]
+    (println "Part 1:" (-> (reduce part-1-action starting-ship-state input)
+                           :location
+                           (manhattan-distance [0 0])))
+    (println "Part 2:" (-> (reduce part-2-action starting-ship-state input)
+                           :location
+                           (manhattan-distance [0 0])))))
+
+(comment
+ (-main))

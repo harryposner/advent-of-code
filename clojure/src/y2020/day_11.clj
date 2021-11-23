@@ -1,8 +1,6 @@
-#!/usr/bin/env -S clj -M
-
-(ns advent-of-code.2020.day-11
-  (:require [clojure.string :as string]))
-
+(ns y2020.day-11
+  (:require [clojure.string :as string]
+            [aocd.core :as aoc]))
 
 (def EMPTY \L)
 (def OCCUPIED \#)
@@ -42,23 +40,23 @@
 
 (defn update-seats [neighbors-fn neighbors-threshold current-seats]
   (vec
-    (map-indexed
-      (fn [row row-seats]
-        (vec
-          (map-indexed
-            (fn [col seat]
-              (let [occupied-neighbors (->> (neighbors-fn current-seats row col)
-                                            (filter #(= % OCCUPIED))
-                                            count)]
-                (cond
-                  (and (= seat EMPTY) (zero? occupied-neighbors))
-                    OCCUPIED
-                  (and (= seat OCCUPIED)
-                       (>= occupied-neighbors neighbors-threshold))
-                    EMPTY
-                  :else seat)))
-            row-seats)))
-      current-seats)))
+   (map-indexed
+    (fn [row row-seats]
+      (vec
+       (map-indexed
+        (fn [col seat]
+          (let [occupied-neighbors (->> (neighbors-fn current-seats row col)
+                                        (filter #(= % OCCUPIED))
+                                        count)]
+            (cond
+              (and (= seat EMPTY) (zero? occupied-neighbors))
+              OCCUPIED
+              (and (= seat OCCUPIED)
+                   (>= occupied-neighbors neighbors-threshold))
+              EMPTY
+              :else seat)))
+        row-seats)))
+    current-seats)))
 
 (defn count-occupied [seats]
   (->> seats
@@ -72,12 +70,18 @@
       value
       (recur f next-value))))
 
-(let [initial-seats (string/split-lines (slurp "input.txt"))]
-  (println "Part 1:"
-           (count-occupied (fixed-point
-                             (partial update-seats neighbors-part-1 4)
-                             initial-seats)))
-  (println "Part 2:"
-           (count-occupied (fixed-point
-                             (partial update-seats neighbors-part-2 5)
-                             initial-seats))))
+(defn -main
+  []
+  (let [raw-input (aoc/input 2020 11)
+        initial-seats (string/split-lines raw-input)]
+    (println "Part 1:"
+             (count-occupied (fixed-point
+                              (partial update-seats neighbors-part-1 4)
+                              initial-seats)))
+    (println "Part 2:"
+             (count-occupied (fixed-point
+                              (partial update-seats neighbors-part-2 5)
+                              initial-seats)))))
+
+(comment
+ (-main))

@@ -1,7 +1,6 @@
-#!/usr/bin/env -S clj -M
-
-(ns advent-of-code.2020.day-13.core
-  (:require [clojure.string :as string]))
+(ns y2020.day-13
+  (:require [clojure.string :as string]
+            [aocd.core :as aoc]))
 
 (defn part-1
   [start schedule]
@@ -11,16 +10,21 @@
 (defn validate-part-2
   [schedule start-time]
   (cond
-   (empty? schedule)
-   true
-   (or (nil? (first schedule))
-       (zero? (mod start-time (first schedule))))
-   (recur (rest schedule) (inc start-time))
-   :else
-   false))
+    (empty? schedule)
+    true
+    (or (nil? (first schedule))
+        (zero? (mod start-time (first schedule))))
+    (recur (rest schedule) (inc start-time))
+    :else
+    false))
 
-(let [[raw-start raw-schedule] (string/split-lines (slurp "2020/day_13/input.txt"))
+(defn -main
+  []
+  (let [[raw-start raw-schedule] (string/split-lines (aoc/input 2020 13))
         start-time (Integer/parseInt raw-start)
         schedule (->> (string/split raw-schedule #",")
                       (map #(if (= "x" %) nil (Integer/parseInt %))))]
-    (println "Part 1:" (part-1 start-time (filter some? schedule))))
+    (println "Part 1:" (part-1 start-time (filter some? schedule)))))
+
+(comment
+ (-main))
