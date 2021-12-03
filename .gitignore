@@ -1,14 +1,15 @@
 input.txt
+.lsp/
+
+venv/
 __pycache__/
 
 # Vim swapfiles
 *.swp
 *.swo
 
-*.nrepl-port
-
-.lsp/
 
 # Clojure specific
+*.nrepl-port
 .clj-kondo/
 .cpcache/
