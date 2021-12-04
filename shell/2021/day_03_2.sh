@@ -31,14 +31,14 @@ do
 	CO2_BIT=$(most_common_bit_in_place $(($i + 1)) "$CO2_RESULT" | tr 01 10)
 	CO2_PATTERN="${DOTS:0:i}$CO2_BIT${DOTS:i+1:$N_BITS-i}"
 
-	if [ $(echo "$OXYGEN_RESULT" | wc -l) -gt 1 ]
+	if [ $(wc -l <<< "$OXYGEN_RESULT") -gt 1 ]
 	then
-		OXYGEN_RESULT=$(echo "$OXYGEN_RESULT" | grep "$OXYGEN_PATTERN")
+		OXYGEN_RESULT=$(grep "$OXYGEN_PATTERN" <<< "$OXYGEN_RESULT")
 	fi
 
-	if [ $(echo "$CO2_RESULT" | wc -l) -gt 1 ]
+	if [ $(wc -l <<< "$CO2_RESULT") -gt 1 ]
 	then
-		CO2_RESULT=$(echo "$CO2_RESULT" | grep "$CO2_PATTERN")
+		CO2_RESULT=$(grep "$CO2_PATTERN" <<< "$CO2_RESULT")
 	fi
 
 done
