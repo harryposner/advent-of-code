@@ -4,13 +4,10 @@
 
 (defn part-1
   [data]
-  (:total (reduce (fn [{:keys [total prev]} current]
-                    {:total (if (< prev current)
-                              (inc total)
-                              total)
-                     :prev current})
-                  {:total 0 :prev (first data)}
-                  (rest data))))
+  (->> data
+       (partition 2 1)
+       (filter (fn [[x y]] (> y x)))
+       count))
 
 (defn part-2
   [data]
@@ -21,8 +18,6 @@
 
 (defn -main
   []
-  (let [data (->> (aoc/input 2021 1)
-                  (string/split-lines)
-                  (map #(Integer/parseInt %)))]
+  (let [data (map #(Integer/parseInt %) (string/split-lines (aoc/input 2021 1)))]
     (println "Part 1: " (part-1 data))
     (println "Part 2: " (part-2 data))))
