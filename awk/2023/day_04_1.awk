@@ -11,8 +11,9 @@
 			winners_on_card++;
 		}
 	}
-	if (winners_on_card)
+	if (winners_on_card) {
 		result += 2 ^ (winners_on_card - 1);
+	}
 }
 
 END { print(result); }
