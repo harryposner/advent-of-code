@@ -19,8 +19,8 @@ sed 's/\s\+/:/g' <<< "$INPUT" \
 	>> /tmp/advent_of_code_2024_01_1
 
 awk '\
-	/^freq/ {printf("freq\t%d\t%d\n", $3, $2); freqs[$3] = $2 } \
-	/^left/ {printf("left\t%d\t%d\n", $2, freqs[$2]); result += $2 * freqs[$2] } \
+	/^freq/ { freqs[$3] = $2 } \
+	/^left/ { result += $2 * freqs[$2] } \
 	END { print result }
 	' < /tmp/advent_of_code_2024_01_1
 
