@@ -1,11 +1,8 @@
 #!/usr/bin/env -S gawk -f
 
 {
-	increasing = 0;
+	increasing = $1 < $2;
 	unsafe = 0;
-	if ($1 < $2) {
-		increasing = 1;
-	}
 	for (i = 1; i < NF; i++) {
 		j = i + 1;
 		unsafe = increasing && $i >= $j ||
