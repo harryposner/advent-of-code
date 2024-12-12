@@ -12,7 +12,7 @@
           inherit system;
         };
       in
-      rec {
+      {
         devShell = pkgs.mkShell {
           buildInputs = with pkgs; [
             aocd
