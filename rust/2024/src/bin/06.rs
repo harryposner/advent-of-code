@@ -1,6 +1,8 @@
 advent_of_code::solution!(6);
 
 
+#[derive(Copy)]
+#[derive(Clone)]
 enum Direction {
     North,
     East,
@@ -9,14 +11,13 @@ enum Direction {
 }
 
 #[derive(Clone)]
-#[derive(Copy)]
-#[derive(PartialEq)]
 enum Cell {
     Empty,
-    Visited,
+    Visited([bool; 4]),
     Impassable,
 }
 
+#[derive(Clone)]
 struct Lab {
     guard_coords: (i32, i32),
     guard_direction: Direction,
@@ -41,7 +42,7 @@ impl Lab {
                     let guard_row = (grid.len() / n_cols) as i32;
                     let guard_col = (grid.len() % n_cols) as i32;
                     guard_coords = (guard_row, guard_col);
-                    grid.push(Cell::Visited);
+                    grid.push(Cell::Visited([true, false, false, false]));
                 },
                 _    => panic!(),
             }
@@ -55,11 +56,11 @@ impl Lab {
         }
     }
 
-    fn grid_get(&self, row: i32, col: i32) -> Option<Cell> {
+    fn grid_get(&mut self, row: i32, col: i32) -> Option<&mut Cell> {
         if row < 0 || row >= self.n_rows || col < 0 || col >= self.n_cols {
             None
         } else {
-            Some(self.grid[(row * self.n_rows + col) as usize])
+            Some(&mut self.grid[(row * self.n_rows + col) as usize])
         }
     }
 
@@ -88,22 +89,42 @@ impl Lab {
         }
     }
 
-    fn in_front_of_guard(&mut self) -> Cell {
+    fn in_front_of_guard(&mut self) -> Option<&mut Cell> {
         let (row_in_front, col_in_front) = self.coords_in_front_of_guard();
-        self.grid_get(row_in_front, col_in_front).unwrap_or(Cell::Empty)
+        self.grid_get(row_in_front, col_in_front)
     }
 
     fn step_forward(&mut self) {
         let (row_in_front, col_in_front) = self.coords_in_front_of_guard();
-        self.grid_set(row_in_front, col_in_front, Cell::Visited);
+        let guard_dir = self.guard_direction;
+        match self.grid_get(row_in_front, col_in_front) {
+            Some(Cell::Empty) => {
+                let directions = match guard_dir {
+                    Direction::North => [true, false, false, false],
+                    Direction::East  => [false, true, false, false],
+                    Direction::South => [false, false, true, false],
+                    Direction::West  => [false, false, false, true],
+                };
+                self.grid_set(row_in_front, col_in_front, Cell::Visited(directions))
+            },
+            Some(Cell::Visited(directions)) => {
+                match guard_dir {
+                    Direction::North => directions[0] = true,
+                    Direction::East  => directions[1] = true,
+                    Direction::South => directions[2] = true,
+                    Direction::West  => directions[3] = true,
+                }
+            }
+            Some(Cell::Impassable) => panic!(),
+            None => {},
+        }
         self.guard_coords = (row_in_front, col_in_front);
     }
 
     fn step(self: &mut Lab) {
-        if self.in_front_of_guard() == Cell::Impassable {
-            self.turn_right();
-        } else {
-            self.step_forward();
+        match self.in_front_of_guard() {
+            Some(Cell::Impassable) => { self.turn_right() },
+            _ => { self.step_forward() },
         }
     }
 
@@ -112,11 +133,37 @@ impl Lab {
         row < 0 || row >= self.n_rows || col < 0 || col >= self.n_cols
     }
 
-    fn simulate(&mut self) -> i32 {
-        while !self.is_complete() {
+    fn is_loop(&mut self) -> bool {
+        let guard_dir = self.guard_direction;
+        match self.in_front_of_guard() {
+            Some(Cell::Visited(directions)) => {
+                match guard_dir {
+                    Direction::North => directions[0],
+                    Direction::East  => directions[1],
+                    Direction::South => directions[2],
+                    Direction::West  => directions[3],
+                }
+            },
+            _ => { false },
+        }
+    }
+
+    fn simulate(&mut self) {
+        while !self.is_complete() && !self.is_loop() {
             self.step();
         }
-        self.grid.iter().filter(|cell| **cell == Cell::Visited).count().try_into().unwrap()
+    }
+
+    fn n_visited(&self) -> i32 {
+        self.grid.iter()
+            .filter(|cell|
+                match **cell {
+                    Cell::Visited(_) => true,
+                    _ => false,
+            })
+            .count()
+            .try_into()
+            .unwrap()
     }
 
 }
@@ -124,11 +171,29 @@ impl Lab {
 
 pub fn part_one(input: &str) -> Option<u64> {
     let mut lab: Lab = Lab::from_input(input);
-    Some(lab.simulate().try_into().unwrap())
+    lab.simulate();
+    Some(lab.n_visited().try_into().unwrap())
 }
 
 pub fn part_two(input: &str) -> Option<u64> {
-    None
+    let original_lab: Lab = Lab::from_input(input);
+    let mut result = 0;
+    for row in 0..original_lab.n_rows {
+        for col in 0..original_lab.n_cols {
+            let mut lab = original_lab.clone();
+            match lab.grid_get(row, col) {
+                Some(Cell::Empty) => {
+                    lab.grid_set(row, col, Cell::Impassable);
+                    lab.simulate();
+                    if lab.is_loop() {
+                        result += 1;
+                    };
+                }
+                _ => {}
+            }
+        }
+    }
+    Some(result)
 }
 
 #[cfg(test)]
@@ -138,12 +203,12 @@ mod tests {
     #[test]
     fn test_part_one() {
         let result = part_one(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
+        assert_eq!(result, Some(41));
     }
 
     #[test]
     fn test_part_two() {
         let result = part_two(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
+        assert_eq!(result, Some(6));
     }
 }
