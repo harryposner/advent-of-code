@@ -3,6 +3,15 @@ advent_of_code::solution!(8);
 use std::collections::{HashMap, HashSet};
 use itertools::Itertools;
 
+fn gcd(mut a: i32, mut b: i32) -> i32 {
+    while b != 0 {
+        let t = b;
+        b = a % b;
+        a = t;
+    }
+    a
+}
+
 struct Map {
     n_rows: i32,
     n_cols: i32,
@@ -60,6 +69,38 @@ impl Map {
         };
         antinodes.len().try_into().unwrap()
     }
+
+    fn gen_antinodes(&self) -> HashSet<(i32, i32)> {
+        self.antennas.values()
+            .flat_map(|antennas| antennas.iter().combinations(2))
+            .flat_map(|pair| {
+                let (r1, c1) = pair[0].to_owned();
+                let (r2, c2) = pair[1].to_owned();
+                let delta_r = r2 - r1;
+                let delta_c = c2 - c1;
+                let dr = delta_r / gcd(delta_r, delta_c);
+                let dc = delta_c / gcd(delta_r, delta_c);
+
+                let mut antinodes = Vec::new();
+                let mut r = r1;
+                let mut c = c1;
+                while r >= 0 && r < self.n_rows && c >= 0 && c < self.n_cols {
+                    antinodes.push((r, c));
+                    r += dr;
+                    c += dc
+                }
+                r = r1;
+                c = c1;
+                while r >= 0 && r < self.n_rows && c >= 0 && c < self.n_cols {
+                    antinodes.push((r, c));
+                    r -= dr;
+                    c -= dc
+                }
+                antinodes
+            }
+            )
+            .collect()
+    }
 }
 
 pub fn part_one(input: &str) -> Option<u64> {
@@ -68,7 +109,9 @@ pub fn part_one(input: &str) -> Option<u64> {
 }
 
 pub fn part_two(input: &str) -> Option<u64> {
-    None
+    let map = Map::from_input(input);
+    let antinodes = map.gen_antinodes();
+    Some(antinodes.len().try_into().unwrap())
 }
 
 #[cfg(test)]
@@ -84,6 +127,6 @@ mod tests {
     #[test]
     fn test_part_two() {
         let result = part_two(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
+        assert_eq!(result, Some(34));
     }
 }
