@@ -1,4 +1,4 @@
-(ns y2019.day-01
+(ns advent.y2019.day-01
   (:require [clojure.string :as string]
             [aocd.core :as aoc]))
 
@@ -19,6 +19,16 @@
   (->> input
        string/split-lines
        (map #(Integer/parseInt %))))
+
+(defn part-1
+  [input]
+  (let [masses (module-masses input)]
+    (apply + (map mass->fuel masses))))
+
+(defn part-2
+  [input]
+  (let [masses (module-masses input)]
+    (apply + (map rocket-equation masses))))
 
 (defn -main
   []

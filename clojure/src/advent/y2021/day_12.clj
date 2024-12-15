@@ -1,4 +1,4 @@
-(ns y2021.day-12
+(ns advent.y2021.day-12
   (:require [clojure.set :as set]
             [clojure.string :as string]
             [aocd.core :as aoc]))

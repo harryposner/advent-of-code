@@ -1,4 +1,4 @@
-(ns y2022.day-06
+(ns advent.y2022.day-06
   (:require [aocd.core :as aoc]))
 
 (defn solve

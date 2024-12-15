@@ -1,4 +1,4 @@
-(ns y2020.day-13
+(ns advent.y2020.day-13
   (:require [clojure.string :as string]
             [aocd.core :as aoc]))
 
