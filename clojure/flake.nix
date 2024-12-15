@@ -15,7 +15,7 @@
       {
         devShell = pkgs.mkShell {
           buildInputs = with pkgs; [
-            aocd
+            aocd  # This isn't the Clojure library; it's the CLI tool
             clojure
             clojure-lsp
           ];
