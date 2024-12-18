@@ -1,11 +1,16 @@
 advent_of_code::solution!(11);
 
-fn parse_input(input: &str) -> Vec<u64> {
+use std::collections::HashMap;
+
+fn parse_input(input: &str) -> HashMap<u64, u64> {
     input
         .trim()
         .split(" ")
         .filter_map(|numstr| numstr.parse::<u64>().ok())
-        .collect()
+        .fold(HashMap::new(), |mut acc, n| {
+            *acc.entry(n).or_insert(0) += 1;
+            acc
+        })
 }
 
 fn count_digits(mut n: u64) -> u64 {
@@ -24,17 +29,17 @@ fn split_digits(n: u64) -> (u64, u64) {
     (left, right)
 }
 
-fn blink(stones: Vec<u64>) -> Vec<u64> {
-    let mut result = Vec::new();
-    for stone in stones {
+fn blink(stones: HashMap<u64, u64>) -> HashMap<u64, u64> {
+    let mut result = HashMap::new();
+    for (stone, count) in stones {
         if stone == 0 {
-            result.push(1);
+            *result.entry(1).or_insert(0) += count;
         } else if count_digits(stone) % 2 == 0 {
             let (left, right) = split_digits(stone);
-            result.push(left);
-            result.push(right);
+            *result.entry(left).or_insert(0) += count;
+            *result.entry(right).or_insert(0) += count;
         } else {
-            result.push(stone * 2024);
+            *result.entry(stone * 2024).or_insert(0) += count;
         }
     }
     result
@@ -45,7 +50,7 @@ pub fn part_one(input: &str) -> Option<u64> {
     for _ in 0..25 {
         stones = blink(stones);
     }
-    Some(stones.len().try_into().unwrap())
+    Some(stones.into_iter().map(|(_, n)| n).sum())
 }
 
 pub fn part_two(input: &str) -> Option<u64> {
@@ -53,7 +58,7 @@ pub fn part_two(input: &str) -> Option<u64> {
     for _ in 0..75 {
         stones = blink(stones);
     }
-    Some(stones.len().try_into().unwrap())
+    Some(stones.into_iter().map(|(_, n)| n).sum())
 }
 
 #[cfg(test)]
