@@ -1,5 +1,5 @@
 {
-  description = "x509-util";
+  description = "Advent of Code solutions in Rust";
 
   inputs = {
     flake-utils.url = "github:numtide/flake-utils";
@@ -11,8 +11,7 @@
         pkgs = import nixpkgs {
           inherit system;
         };
-      in
-      rec {
+      in {
         devShell = pkgs.mkShell {
           buildInputs = with pkgs; [
             rustup
