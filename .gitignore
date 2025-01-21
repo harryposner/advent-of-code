@@ -13,3 +13,6 @@ __pycache__/
 *.nrepl-port
 .clj-kondo/
 .cpcache/
+
+.envrc
+.direnv/
